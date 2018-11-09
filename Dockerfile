@@ -1,8 +1,7 @@
-# Use Ubuntu 18.04 LTS as our base image.
-FROM ubuntu:18.04
+FROM ubuntu:devel
 
 # The Rust toolchain to use when building our image.  Set by `hooks/build`.
-ARG TOOLCHAIN=stable
+ARG TOOLCHAIN=nightly
 
 # The OpenSSL version to use. We parameterize this because many Rust projects
 # will fail to build with 1.1. Here is the place to check for new releases:
@@ -90,9 +89,12 @@ ENV PATH=/home/rust/.cargo/bin:/usr/local/musl/bin:/usr/local/sbin:/usr/local/bi
 # `--target` to musl so that our users don't need to keep overriding it
 # manually.
 RUN curl https://sh.rustup.rs -sSf | \
-    sh -s -- -y --default-toolchain $TOOLCHAIN && \
-    rustup target add x86_64-unknown-linux-musl && \
-    rustup target add armv7-unknown-linux-musleabihf
+    sh -s -- -y --default-toolchain $TOOLCHAIN \
+    && rustup target add x86_64-unknown-linux-musl \
+    && rustup target add armv7-unknown-linux-musleabihf \
+    && rustup install nightly \
+    && rustup default nightly \
+    && rustup update
 ADD cargo-config.toml /home/rust/.cargo/config
 
 # Set up a `git credentials` helper for using GH_USER and GH_TOKEN to access
@@ -114,7 +116,6 @@ RUN echo "Building OpenSSL" && \
     sudo ln -s /usr/include/x86_64-linux-gnu/asm /usr/local/musl/include/asm && \
     sudo ln -s /usr/include/asm-generic /usr/local/musl/include/asm-generic && \
     cd /tmp && \
-    short_version="$(echo "$OPENSSL_VERSION" | sed s'/[a-z]$//' )" && \
     curl -fLO "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" || \
         curl -fLO "https://www.openssl.org/source/old/$short_version/openssl-$OPENSSL_VERSION.tar.gz" && \
     tar xvzf "openssl-$OPENSSL_VERSION.tar.gz" && cd "openssl-$OPENSSL_VERSION" && \
