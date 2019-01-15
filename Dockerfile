@@ -19,11 +19,12 @@ ARG OPENSSL_VERSION=1.1.1g
 # - https://github.com/EmbarkStudios/cargo-deny/releases
 # - http://zlib.net/
 # - https://ftp.postgresql.org/pub/source/
-ARG MDBOOK_VERSION=0.3.7
 ARG CARGO_ABOUT_VERSION=0.2.2
 ARG CARGO_DENY_VERSION=0.6.7
-ARG ZLIB_VERSION=1.2.11
-ARG POSTGRESQL_VERSION=11.8
+ARG MDBOOK_VERSION 0.4.1
+ARG POSTGRESQL_VERSION 12.3
+ARG XZUTILS_VERSION 5.2.5
+ARG ZLIB_VERSION 1.2.11
 
 # Make sure we have basic dev tools for building C libraries.  Our goal
 # here is to support the musl-libc builds and Cargo builds needed for a
@@ -44,6 +45,7 @@ RUN apt-get update && \
         graphviz \
         musl-dev \
         musl-tools \
+        golang \
         libpq-dev \
         libsqlite-dev \
         libssl-dev \
@@ -52,6 +54,10 @@ RUN apt-get update && \
         sudo \
         xutils-dev \
         gcc-multilib-arm-linux-gnueabihf \
+        libbz2-dev \
+        liblzma-dev \
+        libclang-dev \
+        clang \
         && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     useradd rust --user-group --create-home --shell /bin/bash --groups sudo && \
@@ -141,6 +147,13 @@ RUN echo "Building libpq" && \
     CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --prefix=/usr/local/musl && \
     cd src/interfaces/libpq && make all-static-lib && sudo make install-lib-static && \
     cd ../../bin/pg_config && make && sudo make install && \
+    \
+    echo "building xz" && \
+    cd /tmp && \
+    curl -LO "https://tukaani.org/xz/xz-$XZUTILS_VERSION.tar.gz" && \
+    tar xvf "xz-$XZUTILS_VERSION.tar.gz" && cd  "xz-$XZUTILS_VERSION" && \
+    CC=musl-gcc ./configure --disable-shared --prefix=/usr/local/musl && \
+    make && sudo make install && \
     rm -r /tmp/*
 
 ENV OPENSSL_DIR=/usr/local/musl/ \
