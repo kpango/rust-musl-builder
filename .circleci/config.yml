@@ -6,7 +6,7 @@ alias:
         environment:
           ORG_NAME: "kpango"
           REPO_NAME: "rust-musl-builder"
-          IMAGE_NAME: "dev"
+          IMAGE_NAME: "rust-musl-builder"
           GITHUB_API: "https://api.github.com/"
           DOCKER_USER: "kpango"
   setup_remote_docker: &setup_remote_docker
