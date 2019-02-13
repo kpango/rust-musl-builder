@@ -82,12 +82,11 @@ ADD sudoers /etc/sudoers.d/nopasswd
 
 # Run all further code as user `rust`, and create our working directories
 # as the appropriate user.
-USER rust
-RUN mkdir -p /home/rust/libs /home/rust/src
+RUN mkdir -p /root/libs /root/src
 
 # Set up our path with all our binary directories, including those for the
 # musl-gcc toolchain and for our Rust toolchain.
-ENV PATH=/home/rust/.cargo/bin:/usr/local/musl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH=/root/.cargo/bin:/usr/local/musl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Install our Rust toolchain and the `musl` target.  We patch the
 # command-line we pass to the installer so that it won't attempt to
@@ -101,7 +100,7 @@ RUN curl https://sh.rustup.rs -sSf | \
     && rustup install nightly \
     && rustup default nightly \
     && rustup update
-ADD cargo-config.toml /home/rust/.cargo/config
+ADD cargo-config.toml /root/.cargo/config
 
 # Set up a `git credentials` helper for using GH_USER and GH_TOKEN to access
 # private repositories if desired.
@@ -184,4 +183,4 @@ RUN cargo install -f cargo-audit && \
 
 # Expect our source code to live in /home/rust/src.  We'll run the build as
 # user `rust`, which will be uid 1000, gid 1000 outside the container.
-WORKDIR /home/rust/src
+WORKDIR /root/src
