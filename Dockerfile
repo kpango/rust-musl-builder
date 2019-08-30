@@ -38,26 +38,26 @@ ARG ZLIB_VERSION 1.2.11
 RUN apt-get update && \
     apt-get install -y \
         build-essential \
+        clang \
         cmake \
         curl \
         file \
+        gcc-multilib-arm-linux-gnueabihf \
         git \
-        graphviz \
-        musl-dev \
-        musl-tools \
         golang \
+        graphviz \
+        libbz2-dev \
+        libclang-dev \
+        liblzma-dev \
         libpq-dev \
         libsqlite-dev \
         libssl-dev \
         linux-libc-dev \
+        musl-dev \
+        musl-tools \
         pkgconf \
         sudo \
         xutils-dev \
-        gcc-multilib-arm-linux-gnueabihf \
-        libbz2-dev \
-        liblzma-dev \
-        libclang-dev \
-        clang \
         && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     useradd rust --user-group --create-home --shell /bin/bash --groups sudo && \
