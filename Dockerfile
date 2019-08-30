@@ -1,5 +1,7 @@
 FROM ubuntu:devel
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # The Rust toolchain to use when building our image.  Set by `hooks/build`.
 ARG TOOLCHAIN=nightly
 
@@ -21,10 +23,10 @@ ARG OPENSSL_VERSION=1.1.1g
 # - https://ftp.postgresql.org/pub/source/
 ARG CARGO_ABOUT_VERSION=0.2.2
 ARG CARGO_DENY_VERSION=0.6.7
-ARG MDBOOK_VERSION 0.4.1
-ARG POSTGRESQL_VERSION 12.3
-ARG XZUTILS_VERSION 5.2.5
-ARG ZLIB_VERSION 1.2.11
+ARG MDBOOK_VERSION=0.4.1
+ARG POSTGRESQL_VERSION=12.3
+ARG XZUTILS_VERSION=5.2.5
+ARG ZLIB_VERSION=1.2.11
 
 # Make sure we have basic dev tools for building C libraries.  Our goal
 # here is to support the musl-libc builds and Cargo builds needed for a
